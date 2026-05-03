@@ -1,0 +1,52 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.onupkeep.com/api/v2/assets?page=0&limit=5&locationId=loc-building-a",
+    "headers": {
+      "session-token": "tok-abc123xyz",
+      "Accept": "application/json"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "success": true,
+      "total": 18,
+      "offset": 0,
+      "limit": 5,
+      "results": [
+        {
+          "id": "asset-hvac-001",
+          "name": "HVAC Unit A-1",
+          "description": "Carrier 5-ton HVAC unit serving floors 1-3",
+          "serialNumber": "SN-CAR-2021-00412",
+          "model": "48XC060",
+          "manufacturer": "Carrier",
+          "locationId": "loc-building-a",
+          "purchaseDate": "2021-03-15",
+          "purchaseCost": 8500.00,
+          "status": "operational",
+          "createdAt": "2021-03-20T10:00:00Z",
+          "updatedAt": "2026-03-01T09:00:00Z"
+        },
+        {
+          "id": "asset-elevator-001",
+          "name": "Elevator 1",
+          "description": "Otis hydraulic elevator, capacity 2500 lbs",
+          "serialNumber": "SN-OT-2019-00189",
+          "model": "Gen2",
+          "manufacturer": "Otis",
+          "locationId": "loc-building-a",
+          "purchaseDate": "2019-06-01",
+          "purchaseCost": 45000.00,
+          "status": "operational",
+          "createdAt": "2019-06-15T08:00:00Z",
+          "updatedAt": "2026-04-20T14:30:00Z"
+        }
+      ]
+    }
+  }
+}

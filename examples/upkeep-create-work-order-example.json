@@ -1,0 +1,43 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://api.onupkeep.com/api/v2/work-orders",
+    "headers": {
+      "session-token": "tok-abc123xyz",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "title": "HVAC Filter Replacement - Building A",
+      "description": "Replace air filters on all HVAC units in Building A as part of quarterly maintenance",
+      "priority": "medium",
+      "assetId": "asset-hvac-001",
+      "locationId": "loc-building-a",
+      "assignedToId": "user-maint-tech-02",
+      "dueDate": "2026-05-15",
+      "estimatedHours": 2.5,
+      "category": "Preventive Maintenance"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "success": true,
+      "id": "wo-20260503-00441",
+      "title": "HVAC Filter Replacement - Building A",
+      "description": "Replace air filters on all HVAC units in Building A as part of quarterly maintenance",
+      "status": "open",
+      "priority": "medium",
+      "assetId": "asset-hvac-001",
+      "locationId": "loc-building-a",
+      "assignedToId": "user-maint-tech-02",
+      "dueDate": "2026-05-15",
+      "estimatedHours": 2.5,
+      "category": "Preventive Maintenance",
+      "createdAt": "2026-05-03T14:00:00Z",
+      "updatedAt": "2026-05-03T14:00:00Z"
+    }
+  }
+}

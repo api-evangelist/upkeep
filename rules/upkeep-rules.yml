@@ -1,0 +1,79 @@
+extends: spectral:oas
+rules:
+  upkeep-operation-ids-camel-case:
+    description: Operation IDs must use camelCase
+    message: "Operation ID '{{value}}' must be camelCase"
+    severity: warn
+    given: "$.paths[*][*].operationId"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-zA-Z0-9]*$"
+
+  upkeep-path-kebab-case:
+    description: Path segments must use kebab-case
+    message: "Path '{{path}}' must use kebab-case segments"
+    severity: warn
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(/[a-z0-9{}-]+)+$"
+
+  upkeep-summaries-title-case:
+    description: Operation summaries must use Title Case
+    message: "Summary '{{value}}' must use Title Case"
+    severity: warn
+    given: "$.paths[*][*].summary"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^([A-Z][a-z0-9]* ?)+$"
+
+  upkeep-success-envelope:
+    description: Successful responses should include a success boolean field
+    message: "Success response should include a 'success' boolean field"
+    severity: info
+    given: "$.paths[*][*].responses.200.content.application/json.schema"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          properties:
+            properties:
+              type: object
+
+  upkeep-delete-returns-204:
+    description: DELETE operations must return 204 No Content
+    message: "DELETE operation should return 204"
+    severity: warn
+    given: "$.paths[*].delete.responses"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          required: ['204']
+
+  upkeep-pagination-params:
+    description: List operations should support page and limit parameters
+    message: "List operation should include page and limit query parameters"
+    severity: info
+    given: "$.paths[*].get"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+
+  upkeep-session-token-auth:
+    description: All non-auth operations must require session-token header
+    message: "Operation must use SessionToken security scheme"
+    severity: warn
+    given: "$.paths[?(!@property.match(/\\/auth/))][get,post,patch,delete]"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object

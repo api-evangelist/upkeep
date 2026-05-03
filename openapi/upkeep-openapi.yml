@@ -1,0 +1,1851 @@
+openapi: 3.0.3
+info:
+  title: UpKeep API
+  description: >-
+    UpKeep is an asset operations management and CMMS (Computerized Maintenance
+    Management System) platform. The UpKeep API provides programmatic access
+    to work orders, assets, parts, locations, preventive maintenance schedules,
+    purchase orders, meters, and webhooks for maintenance teams and facility
+    managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+  - url: https://api.onupkeep.com/api/v2
+    description: UpKeep Production API
+
+tags:
+  - name: Authentication
+    description: Session token management
+  - name: Work Orders
+    description: Work order creation and management
+  - name: Assets
+    description: Asset lifecycle and downtime management
+  - name: Locations
+    description: Location hierarchy management
+  - name: Parts
+    description: Parts and inventory management
+  - name: Preventive Maintenance
+    description: Preventive maintenance schedules and triggers
+  - name: Purchase Orders
+    description: Purchase order management
+  - name: Meters
+    description: Meter and reading management
+  - name: Requests
+    description: Maintenance request management
+  - name: Webhooks
+    description: Webhook event subscription management
+
+paths:
+  /auth:
+    post:
+      operationId: createSession
+      summary: Create Session
+      description: Authenticate with email and password to obtain a session token.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User email address
+                password:
+                  type: string
+                  description: User password
+      security: []
+      responses:
+        '200':
+          description: Session token created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    delete:
+      operationId: deleteSession
+      summary: Delete Session
+      description: Invalidate the current session token (logout).
+      tags:
+        - Authentication
+      responses:
+        '204':
+          description: Session invalidated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /work-orders:
+    get:
+      operationId: listWorkOrders
+      summary: List Work Orders
+      description: >-
+        Retrieve a paginated list of work orders. Supports filtering by status,
+        priority, asset, location, and date range.
+      tags:
+        - Work Orders
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Pagination offset (number of records to skip)
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+            maximum: 250
+          description: Number of records to return
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, in-progress, on-hold, complete]
+          description: Filter by work order status
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [none, low, medium, high]
+          description: Filter by priority level
+        - name: includes
+          in: query
+          schema:
+            type: string
+          description: Comma-separated list of related resources to include (e.g., assignedTo,location,asset)
+        - name: sort
+          in: query
+          schema:
+            type: string
+          description: Sort field and direction (e.g., createdAt:desc)
+      responses:
+        '200':
+          description: List of work orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createWorkOrder
+      summary: Create Work Order
+      description: Create a new work order for maintenance tasks.
+      tags:
+        - Work Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderRequest'
+      responses:
+        '200':
+          description: Work order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /work-orders/{id}:
+    get:
+      operationId: getWorkOrder
+      summary: Get Work Order
+      description: Retrieve details of a specific work order.
+      tags:
+        - Work Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Work order identifier
+        - name: includes
+          in: query
+          schema:
+            type: string
+          description: Related resources to include
+      responses:
+        '200':
+          description: Work order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updateWorkOrder
+      summary: Update Work Order
+      description: Update fields on an existing work order.
+      tags:
+        - Work Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderRequest'
+      responses:
+        '200':
+          description: Work order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deleteWorkOrder
+      summary: Delete Work Order
+      description: Permanently delete a work order.
+      tags:
+        - Work Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Work order deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /assets:
+    get:
+      operationId: listAssets
+      summary: List Assets
+      description: Retrieve a paginated list of assets.
+      tags:
+        - Assets
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: includes
+          in: query
+          schema:
+            type: string
+          description: Comma-separated related resources to include
+        - name: locationId
+          in: query
+          schema:
+            type: string
+          description: Filter by location
+      responses:
+        '200':
+          description: List of assets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createAsset
+      summary: Create Asset
+      description: Create a new asset in the system.
+      tags:
+        - Assets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetRequest'
+      responses:
+        '200':
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /assets/{id}:
+    get:
+      operationId: getAsset
+      summary: Get Asset
+      description: Retrieve details of a specific asset.
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Asset details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updateAsset
+      summary: Update Asset
+      description: Update an existing asset.
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetRequest'
+      responses:
+        '200':
+          description: Asset updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deleteAsset
+      summary: Delete Asset
+      description: Delete an asset from the system.
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Asset deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /assets/{id}/downtime:
+    post:
+      operationId: recordAssetDowntime
+      summary: Record Asset Downtime
+      description: Record a downtime event for an asset.
+      tags:
+        - Assets
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Asset identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - startTime
+                - downtimeStatusId
+              properties:
+                startTime:
+                  type: string
+                  format: date-time
+                endTime:
+                  type: string
+                  format: date-time
+                downtimeStatusId:
+                  type: string
+                  description: Downtime status category identifier
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Downtime event recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DowntimeEvent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /locations:
+    get:
+      operationId: listLocations
+      summary: List Locations
+      description: Retrieve a list of locations in the location hierarchy.
+      tags:
+        - Locations
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: parentId
+          in: query
+          schema:
+            type: string
+          description: Filter by parent location
+      responses:
+        '200':
+          description: List of locations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createLocation
+      summary: Create Location
+      description: Create a new location.
+      tags:
+        - Locations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationRequest'
+      responses:
+        '200':
+          description: Location created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /locations/{id}:
+    get:
+      operationId: getLocation
+      summary: Get Location
+      description: Retrieve details of a specific location.
+      tags:
+        - Locations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Location details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updateLocation
+      summary: Update Location
+      description: Update an existing location.
+      tags:
+        - Locations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationRequest'
+      responses:
+        '200':
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deleteLocation
+      summary: Delete Location
+      description: Delete a location.
+      tags:
+        - Locations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Location deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /parts:
+    get:
+      operationId: listParts
+      summary: List Parts
+      description: Retrieve a list of parts and inventory items.
+      tags:
+        - Parts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+      responses:
+        '200':
+          description: List of parts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createPart
+      summary: Create Part
+      description: Create a new part or inventory item.
+      tags:
+        - Parts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartRequest'
+      responses:
+        '200':
+          description: Part created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /parts/{id}:
+    get:
+      operationId: getPart
+      summary: Get Part
+      description: Retrieve details of a specific part.
+      tags:
+        - Parts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Part details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updatePart
+      summary: Update Part
+      description: Update an existing part.
+      tags:
+        - Parts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartRequest'
+      responses:
+        '200':
+          description: Part updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deletePart
+      summary: Delete Part
+      description: Delete a part from inventory.
+      tags:
+        - Parts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Part deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /preventive-maintenances:
+    get:
+      operationId: listPreventiveMaintenances
+      summary: List Preventive Maintenances
+      description: Retrieve a list of preventive maintenance schedules.
+      tags:
+        - Preventive Maintenance
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+      responses:
+        '200':
+          description: List of preventive maintenance schedules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreventiveMaintenanceList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createPreventiveMaintenance
+      summary: Create Preventive Maintenance
+      description: Create a new preventive maintenance schedule.
+      tags:
+        - Preventive Maintenance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreventiveMaintenanceRequest'
+      responses:
+        '200':
+          description: Preventive maintenance schedule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreventiveMaintenance'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /preventive-maintenances/{id}:
+    get:
+      operationId: getPreventiveMaintenance
+      summary: Get Preventive Maintenance
+      description: Retrieve details of a specific preventive maintenance schedule.
+      tags:
+        - Preventive Maintenance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Preventive maintenance details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreventiveMaintenance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updatePreventiveMaintenance
+      summary: Update Preventive Maintenance
+      description: Update a preventive maintenance schedule.
+      tags:
+        - Preventive Maintenance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreventiveMaintenanceRequest'
+      responses:
+        '200':
+          description: Preventive maintenance updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreventiveMaintenance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deletePreventiveMaintenance
+      summary: Delete Preventive Maintenance
+      description: Delete a preventive maintenance schedule.
+      tags:
+        - Preventive Maintenance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Preventive maintenance deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /purchase-orders:
+    get:
+      operationId: listPurchaseOrders
+      summary: List Purchase Orders
+      description: Retrieve a list of purchase orders.
+      tags:
+        - Purchase Orders
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, pending, approved, received, cancelled]
+      responses:
+        '200':
+          description: List of purchase orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createPurchaseOrder
+      summary: Create Purchase Order
+      description: Create a new purchase order.
+      tags:
+        - Purchase Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrderRequest'
+      responses:
+        '200':
+          description: Purchase order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /purchase-orders/{id}:
+    get:
+      operationId: getPurchaseOrder
+      summary: Get Purchase Order
+      description: Retrieve details of a specific purchase order.
+      tags:
+        - Purchase Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Purchase order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updatePurchaseOrder
+      summary: Update Purchase Order
+      description: Update an existing purchase order.
+      tags:
+        - Purchase Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrderRequest'
+      responses:
+        '200':
+          description: Purchase order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deletePurchaseOrder
+      summary: Delete Purchase Order
+      description: Delete a purchase order.
+      tags:
+        - Purchase Orders
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Purchase order deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /meters:
+    get:
+      operationId: listMeters
+      summary: List Meters
+      description: Retrieve a list of meters.
+      tags:
+        - Meters
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+      responses:
+        '200':
+          description: List of meters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeterList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createMeter
+      summary: Create Meter
+      description: Create a new meter for tracking asset readings.
+      tags:
+        - Meters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeterRequest'
+      responses:
+        '200':
+          description: Meter created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meter'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /meters/{id}/readings:
+    post:
+      operationId: submitMeterReading
+      summary: Submit Meter Reading
+      description: Submit a new reading for a meter.
+      tags:
+        - Meters
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Meter identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - value
+                - readingDate
+              properties:
+                value:
+                  type: number
+                  description: Meter reading value
+                readingDate:
+                  type: string
+                  format: date-time
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Meter reading recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeterReading'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /requests:
+    get:
+      operationId: listRequests
+      summary: List Requests
+      description: Retrieve a list of maintenance requests.
+      tags:
+        - Requests
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 25
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, pending, cancelled, complete]
+      responses:
+        '200':
+          description: List of maintenance requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createRequest
+      summary: Create Request
+      description: Create a new maintenance request.
+      tags:
+        - Requests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaintenanceRequestBody'
+      responses:
+        '200':
+          description: Maintenance request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceRequest'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /requests/{id}:
+    get:
+      operationId: getRequest
+      summary: Get Request
+      description: Retrieve a specific maintenance request.
+      tags:
+        - Requests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Maintenance request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      summary: List Webhooks
+      description: Retrieve a list of webhook subscriptions.
+      tags:
+        - Webhooks
+      responses:
+        '200':
+          description: List of webhooks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      operationId: createWebhook
+      summary: Create Webhook
+      description: Create a new webhook subscription for event notifications.
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+      responses:
+        '200':
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /webhooks/{id}:
+    get:
+      operationId: getWebhook
+      summary: Get Webhook
+      description: Retrieve details of a specific webhook subscription.
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      operationId: updateWebhook
+      summary: Update Webhook
+      description: Update an existing webhook subscription.
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+      responses:
+        '200':
+          description: Webhook updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      operationId: deleteWebhook
+      summary: Delete Webhook
+      description: Delete a webhook subscription.
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Webhook deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth
+
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+
+    SessionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        token:
+          type: string
+          description: Session token for subsequent API calls
+        userId:
+          type: string
+
+    WorkOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [open, in-progress, on-hold, complete]
+        priority:
+          type: string
+          enum: [none, low, medium, high]
+        assetId:
+          type: string
+        locationId:
+          type: string
+        assignedToId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        estimatedHours:
+          type: number
+        actualHours:
+          type: number
+        category:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    WorkOrderList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrder'
+
+    WorkOrderRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [open, in-progress, on-hold, complete]
+        priority:
+          type: string
+          enum: [none, low, medium, high]
+        assetId:
+          type: string
+        locationId:
+          type: string
+        assignedToId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        estimatedHours:
+          type: number
+
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        serialNumber:
+          type: string
+        model:
+          type: string
+        manufacturer:
+          type: string
+        locationId:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchaseCost:
+          type: number
+        status:
+          type: string
+          enum: [operational, needs-repair, decommissioned]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AssetList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
+
+    AssetRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        serialNumber:
+          type: string
+        model:
+          type: string
+        manufacturer:
+          type: string
+        locationId:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchaseCost:
+          type: number
+
+    DowntimeEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        assetId:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        downtimeStatusId:
+          type: string
+        duration:
+          type: integer
+          description: Duration in minutes
+        notes:
+          type: string
+
+    Location:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        parentId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    LocationList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Location'
+
+    LocationRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        parentId:
+          type: string
+
+    Part:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        partNumber:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        minimumQuantity:
+          type: integer
+        locationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    PartList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+
+    PartRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        partNumber:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        minimumQuantity:
+          type: integer
+
+    PreventiveMaintenance:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        frequency:
+          type: string
+          enum: [daily, weekly, monthly, quarterly, annually, custom]
+        startDate:
+          type: string
+          format: date
+        assignedToId:
+          type: string
+        estimatedHours:
+          type: number
+        active:
+          type: boolean
+
+    PreventiveMaintenanceList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreventiveMaintenance'
+
+    PreventiveMaintenanceRequest:
+      type: object
+      required:
+        - title
+        - frequency
+        - startDate
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        frequency:
+          type: string
+          enum: [daily, weekly, monthly, quarterly, annually, custom]
+        startDate:
+          type: string
+          format: date
+        assignedToId:
+          type: string
+        estimatedHours:
+          type: number
+
+    PurchaseOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        poNumber:
+          type: string
+        vendorId:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending, approved, received, cancelled]
+        totalCost:
+          type: number
+        lineItems:
+          type: array
+          items:
+            type: object
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+        createdAt:
+          type: string
+          format: date-time
+
+    PurchaseOrderList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PurchaseOrder'
+
+    PurchaseOrderRequest:
+      type: object
+      required:
+        - vendorId
+        - lineItems
+      properties:
+        vendorId:
+          type: string
+        lineItems:
+          type: array
+          items:
+            type: object
+            required:
+              - partId
+              - quantity
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+
+    Meter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
+          description: Unit of measurement (e.g., hours, miles, cycles)
+        currentReading:
+          type: number
+        lastReadingDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    MeterList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meter'
+
+    MeterRequest:
+      type: object
+      required:
+        - name
+        - assetId
+        - unit
+      properties:
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
+
+    MeterReading:
+      type: object
+      properties:
+        id:
+          type: string
+        meterId:
+          type: string
+        value:
+          type: number
+        readingDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+
+    MaintenanceRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [open, pending, cancelled, complete]
+        assetId:
+          type: string
+        locationId:
+          type: string
+        priority:
+          type: string
+          enum: [none, low, medium, high]
+        createdAt:
+          type: string
+          format: date-time
+
+    RequestList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MaintenanceRequest'
+
+    MaintenanceRequestBody:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        priority:
+          type: string
+          enum: [none, low, medium, high]
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+          description: Event types to subscribe to (e.g., work_order.created, asset.updated)
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    WebhookList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+
+    WebhookRequest:
+      type: object
+      required:
+        - url
+        - events
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+          default: true
+
+security:
+  - SessionToken: []

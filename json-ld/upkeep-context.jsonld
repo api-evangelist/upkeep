@@ -1,0 +1,43 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "upkeep": "https://api.onupkeep.com/api/v2/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    "WorkOrder": "schema:Order",
+    "id": { "@id": "schema:identifier", "@type": "xsd:string" },
+    "title": { "@id": "schema:name", "@type": "xsd:string" },
+    "description": { "@id": "schema:description", "@type": "xsd:string" },
+    "status": { "@id": "upkeep:status", "@type": "xsd:string" },
+    "priority": { "@id": "upkeep:priority", "@type": "xsd:string" },
+    "dueDate": { "@id": "schema:scheduledTime", "@type": "xsd:date" },
+    "estimatedHours": { "@id": "upkeep:estimatedHours", "@type": "xsd:decimal" },
+    "actualHours": { "@id": "upkeep:actualHours", "@type": "xsd:decimal" },
+    "completedAt": { "@id": "schema:endDate", "@type": "xsd:dateTime" },
+
+    "Asset": "schema:Product",
+    "name": { "@id": "schema:name", "@type": "xsd:string" },
+    "serialNumber": { "@id": "schema:serialNumber", "@type": "xsd:string" },
+    "model": { "@id": "schema:model", "@type": "xsd:string" },
+    "manufacturer": { "@id": "schema:manufacturer", "@type": "xsd:string" },
+    "purchaseDate": { "@id": "schema:purchaseDate", "@type": "xsd:date" },
+    "purchaseCost": { "@id": "schema:price", "@type": "xsd:decimal" },
+
+    "Location": "schema:Place",
+    "address": { "@id": "schema:address", "@type": "xsd:string" },
+    "parentId": { "@id": "upkeep:parentLocation", "@type": "xsd:string" },
+
+    "Part": "schema:Product",
+    "partNumber": { "@id": "schema:productID", "@type": "xsd:string" },
+    "quantity": { "@id": "schema:inventoryLevel", "@type": "xsd:integer" },
+    "unitCost": { "@id": "schema:price", "@type": "xsd:decimal" },
+
+    "PurchaseOrder": "schema:Order",
+
+    "createdAt": { "@id": "schema:dateCreated", "@type": "xsd:dateTime" },
+    "updatedAt": { "@id": "schema:dateModified", "@type": "xsd:dateTime" },
+    "locationId": { "@id": "upkeep:locationId", "@type": "xsd:string" },
+    "assetId": { "@id": "upkeep:assetId", "@type": "xsd:string" }
+  }
+}

@@ -1,0 +1,145 @@
+title: UpKeep Vocabulary
+description: >-
+  Domain vocabulary for the UpKeep CMMS and asset operations management
+  platform, covering maintenance management, facility management, and
+  asset lifecycle concepts.
+version: '1.0'
+created: '2026-05-03'
+modified: '2026-05-03'
+tags:
+  - CMMS
+  - Maintenance Management
+  - Asset Management
+  - Facility Management
+
+terms:
+  - term: Work Order
+    definition: >-
+      A documented request to perform maintenance, repair, or inspection work
+      on an asset or at a location. Work orders track the task title, assigned
+      technician, priority, status, estimated and actual hours, and completion details.
+    related:
+      - Preventive Maintenance
+      - Asset
+      - Technician
+
+  - term: Asset
+    definition: >-
+      A physical piece of equipment, machinery, vehicle, or infrastructure
+      component tracked in UpKeep. Each asset has a location, maintenance history,
+      and can be associated with work orders, meters, and preventive maintenance schedules.
+    related:
+      - Work Order
+      - Meter
+      - Downtime
+
+  - term: CMMS
+    definition: >-
+      Computerized Maintenance Management System. Software that centralizes
+      maintenance information and facilitates maintenance operations by tracking
+      work orders, assets, parts, and preventive maintenance schedules.
+    synonyms:
+      - Computerized Maintenance Management System
+    related:
+      - Work Order
+      - Preventive Maintenance
+
+  - term: Preventive Maintenance
+    definition: >-
+      Scheduled maintenance performed on a regular basis (daily, weekly,
+      monthly, etc.) to reduce the likelihood of equipment failure and extend
+      asset lifespan.
+    synonyms:
+      - PM
+    related:
+      - Work Order
+      - Asset
+      - Meter-Based Maintenance
+
+  - term: Location
+    definition: >-
+      A physical place in the organization's facility hierarchy where assets
+      are installed and work orders are assigned. Locations can be nested
+      to represent buildings, floors, rooms, or areas.
+    related:
+      - Asset
+      - Work Order
+
+  - term: Part
+    definition: >-
+      A spare part or inventory item stored and tracked in UpKeep for use
+      in maintenance work orders. Parts have quantity on hand, unit cost,
+      and minimum quantity thresholds for reorder alerts.
+    related:
+      - Purchase Order
+      - Work Order
+      - Inventory
+
+  - term: Meter
+    definition: >-
+      A measurement instrument associated with an asset that tracks usage or
+      condition over time (e.g., hours run, miles driven, cycles completed).
+      Meter readings can trigger maintenance work orders when thresholds are reached.
+    related:
+      - Asset
+      - Preventive Maintenance
+      - Meter-Based Maintenance
+
+  - term: Purchase Order
+    definition: >-
+      A formal document authorizing the purchase of parts or services from
+      a vendor. Purchase orders in UpKeep support line items, partial fulfillment,
+      and approval workflows.
+    related:
+      - Part
+      - Vendor
+
+  - term: Request
+    definition: >-
+      A maintenance request submitted by a non-technician user (e.g., employee,
+      tenant) to report a problem or request service. Requests can be converted
+      into work orders by maintenance managers.
+    related:
+      - Work Order
+      - Requestor
+
+  - term: Downtime
+    definition: >-
+      A period during which an asset is unavailable due to failure, planned
+      maintenance, or other events. Downtime events are recorded with start/end
+      times and categorized by downtime status.
+    related:
+      - Asset
+      - Downtime Status
+
+  - term: Webhook
+    definition: >-
+      An HTTP callback that sends real-time event notifications to an external
+      URL when specific events occur in UpKeep (e.g., work order created,
+      asset updated, PM triggered).
+    related:
+      - Integration
+
+  - term: Session Token
+    definition: >-
+      An authentication token obtained by logging in with email and password via
+      the POST /auth endpoint. The session token is passed in the session-token
+      header for all subsequent API calls.
+    related:
+      - Authentication
+
+  - term: Priority
+    definition: >-
+      The urgency level of a work order or request: none, low, medium, or high.
+      Priority helps maintenance teams triage and schedule work.
+    related:
+      - Work Order
+
+  - term: Includes
+    definition: >-
+      An API query parameter that specifies comma-separated related resources
+      to embed in the response (e.g., includes=assignedTo,location,asset),
+      reducing the need for additional API calls.
+    related:
+      - Work Order
+      - Asset

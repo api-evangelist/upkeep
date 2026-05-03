@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/upkeep/main/json-schema/upkeep-asset-schema.json",
+  "title": "UpKeep Asset",
+  "description": "A physical asset tracked in the UpKeep CMMS platform",
+  "type": "object",
+  "required": ["id", "name"],
+  "properties": {
+    "id": { "type": "string", "description": "Unique asset identifier" },
+    "name": { "type": "string", "description": "Asset name" },
+    "description": { "type": "string" },
+    "serialNumber": { "type": "string" },
+    "model": { "type": "string" },
+    "manufacturer": { "type": "string" },
+    "locationId": { "type": "string" },
+    "purchaseDate": { "type": "string", "format": "date" },
+    "purchaseCost": { "type": "number" },
+    "status": { "type": "string", "enum": ["operational", "needs-repair", "decommissioned"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

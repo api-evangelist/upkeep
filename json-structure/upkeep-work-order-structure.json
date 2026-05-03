@@ -1,0 +1,22 @@
+{
+  "title": "UpKeep Work Order Structure",
+  "description": "Field-level documentation for the UpKeep Work Order resource",
+  "type": "object",
+  "fields": [
+    { "name": "id", "type": "string", "required": true, "description": "Unique work order identifier" },
+    { "name": "title", "type": "string", "required": true, "description": "Work order title/summary" },
+    { "name": "description", "type": "string", "required": false, "description": "Detailed description of work required" },
+    { "name": "status", "type": "string (enum)", "required": true, "description": "open | in-progress | on-hold | complete" },
+    { "name": "priority", "type": "string (enum)", "required": false, "description": "none | low | medium | high" },
+    { "name": "assetId", "type": "string", "required": false, "description": "Identifier of associated asset" },
+    { "name": "locationId", "type": "string", "required": false, "description": "Location identifier" },
+    { "name": "assignedToId", "type": "string", "required": false, "description": "Assigned technician or team" },
+    { "name": "dueDate", "type": "string (date)", "required": false, "description": "Work order due date" },
+    { "name": "estimatedHours", "type": "number", "required": false, "description": "Estimated hours to complete" },
+    { "name": "actualHours", "type": "number", "required": false, "description": "Actual hours logged" },
+    { "name": "category", "type": "string", "required": false, "description": "Work order category/type" },
+    { "name": "createdAt", "type": "string (date-time)", "required": false, "description": "Creation timestamp" },
+    { "name": "updatedAt", "type": "string (date-time)", "required": false, "description": "Last update timestamp" },
+    { "name": "completedAt", "type": "string (date-time)", "required": false, "description": "Completion timestamp" }
+  ]
+}

@@ -1,0 +1,303 @@
+naftiko: "1.0.0-alpha1"
+
+info:
+  label: "UpKeep Maintenance Operations"
+  description: >-
+    Workflow capability for UpKeep maintenance operations, composing work order
+    management, asset tracking, preventive maintenance scheduling, parts
+    inventory, and purchase order workflows. Designed for maintenance managers,
+    facility managers, and technicians executing day-to-day operations
+    management tasks.
+  tags:
+    - UpKeep
+    - CMMS
+    - Maintenance Management
+    - Asset Management
+    - Facility Management
+    - Work Orders
+    - Preventive Maintenance
+  created: "2026-05-03"
+  modified: "2026-05-03"
+
+binds:
+  - namespace: env
+    keys:
+      UPKEEP_SESSION_TOKEN: UPKEEP_SESSION_TOKEN
+
+capability:
+  consumes:
+    - import: upkeep
+      location: ./shared/upkeep.yaml
+
+  exposes:
+    - type: rest
+      port: 8080
+      namespace: upkeep-maintenance-api
+      description: "Unified REST API for UpKeep maintenance operations workflows."
+      resources:
+        - path: /v1/work-orders
+          name: work-orders
+          description: "Work order management"
+          operations:
+            - method: GET
+              name: list-work-orders
+              description: "List work orders with optional filters"
+              call: "upkeep.list-work-orders"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: POST
+              name: create-work-order
+              description: "Create a new maintenance work order"
+              call: "upkeep.create-work-order"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/work-orders/{id}
+          name: work-order
+          description: "Individual work order operations"
+          operations:
+            - method: GET
+              name: get-work-order
+              description: "Get work order details"
+              call: "upkeep.get-work-order"
+              with:
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: PATCH
+              name: update-work-order
+              description: "Update a work order status or assignment"
+              call: "upkeep.update-work-order"
+              with:
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/assets
+          name: assets
+          description: "Asset tracking and management"
+          operations:
+            - method: GET
+              name: list-assets
+              description: "List assets with location filter"
+              call: "upkeep.list-assets"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: POST
+              name: create-asset
+              description: "Register a new asset"
+              call: "upkeep.create-asset"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/assets/{id}
+          name: asset
+          description: "Individual asset operations"
+          operations:
+            - method: GET
+              name: get-asset
+              description: "Get asset details and history"
+              call: "upkeep.get-asset"
+              with:
+                id: "rest.id"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/preventive-maintenances
+          name: preventive-maintenances
+          description: "Preventive maintenance schedules"
+          operations:
+            - method: GET
+              name: list-preventive-maintenances
+              description: "List PM schedules"
+              call: "upkeep.list-preventive-maintenances"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: POST
+              name: create-preventive-maintenance
+              description: "Create a new PM schedule"
+              call: "upkeep.create-preventive-maintenance"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/parts
+          name: parts
+          description: "Parts and inventory"
+          operations:
+            - method: GET
+              name: list-parts
+              description: "List parts in inventory"
+              call: "upkeep.list-parts"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/meters
+          name: meters
+          description: "Meter tracking"
+          operations:
+            - method: GET
+              name: list-meters
+              description: "List meters"
+              call: "upkeep.list-meters"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+        - path: /v1/requests
+          name: requests
+          description: "Maintenance request intake"
+          operations:
+            - method: GET
+              name: list-requests
+              description: "List maintenance requests"
+              call: "upkeep.list-requests"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+            - method: POST
+              name: create-request
+              description: "Submit a maintenance request"
+              call: "upkeep.create-request"
+              outputParameters:
+                - type: object
+                  mapping: "$."
+
+    - type: mcp
+      port: 9090
+      namespace: upkeep-maintenance-mcp
+      transport: http
+      description: "MCP server for AI-assisted UpKeep maintenance operations."
+      tools:
+        - name: list-work-orders
+          description: "List maintenance work orders with optional status and priority filters"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-work-orders"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-work-order
+          description: "Get full details of a specific work order"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.get-work-order"
+          with:
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-work-order
+          description: "Create a new maintenance work order"
+          hints:
+            readOnly: false
+            openWorld: false
+          call: "upkeep.create-work-order"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: update-work-order
+          description: "Update a work order status, priority, or assignment"
+          hints:
+            readOnly: false
+            idempotent: true
+          call: "upkeep.update-work-order"
+          with:
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-assets
+          description: "List facility assets, optionally filtered by location"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-assets"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: get-asset
+          description: "Get details and maintenance history for a specific asset"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.get-asset"
+          with:
+            id: "tools.id"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-asset
+          description: "Register a new asset in the system"
+          hints:
+            readOnly: false
+            openWorld: false
+          call: "upkeep.create-asset"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-preventive-maintenances
+          description: "List preventive maintenance schedules"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-preventive-maintenances"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-preventive-maintenance
+          description: "Create a new preventive maintenance schedule"
+          hints:
+            readOnly: false
+            openWorld: false
+          call: "upkeep.create-preventive-maintenance"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-parts
+          description: "List parts and inventory items"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-parts"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-meters
+          description: "List meters for asset condition tracking"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-meters"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: list-requests
+          description: "List maintenance requests submitted by requestors"
+          hints:
+            readOnly: true
+            openWorld: false
+          call: "upkeep.list-requests"
+          outputParameters:
+            - type: object
+              mapping: "$."
+        - name: create-request
+          description: "Submit a new maintenance request"
+          hints:
+            readOnly: false
+            openWorld: false
+          call: "upkeep.create-request"
+          outputParameters:
+            - type: object
+              mapping: "$."

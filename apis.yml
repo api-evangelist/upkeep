@@ -50,6 +50,12 @@ common:
     url: https://developers.onupkeep.com/
   - type: REST API Integration
     url: https://upkeep.com/integrations/rest-api/
+  - type: Integrations
+    url: https://upkeep.com/product/integrations
+integrations:
+  - name: UpKeep
+  - name: Download on the App Store
+  - name: Get it on Google Play
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

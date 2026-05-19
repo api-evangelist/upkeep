@@ -1,0 +1,242 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: UpKeep API — Locations
+  description: 'UpKeep API — Locations. 5 operations. Lead operation: List Locations. Self-contained Naftiko capability covering
+    one Upkeep business surface.'
+  tags:
+  - Upkeep
+  - Locations
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    UPKEEP_API_KEY: UPKEEP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: upkeep-locations
+    baseUri: https://api.onupkeep.com/api/v2
+    description: UpKeep API — Locations business capability. Self-contained, no shared references.
+    resources:
+    - name: locations
+      path: /locations
+      operations:
+      - name: listlocations
+        method: GET
+        description: List Locations
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+        - name: parentId
+          in: query
+          type: string
+          description: Filter by parent location
+      - name: createlocation
+        method: POST
+        description: Create Location
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: locations-id
+      path: /locations/{id}
+      operations:
+      - name: getlocation
+        method: GET
+        description: Get Location
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+      - name: updatelocation
+        method: PATCH
+        description: Update Location
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletelocation
+        method: DELETE
+        description: Delete Location
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: session-token
+      value: '{{env.UPKEEP_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: upkeep-locations-rest
+    port: 8080
+    description: REST adapter for UpKeep API — Locations. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/locations
+      name: locations
+      description: REST surface for locations.
+      operations:
+      - method: GET
+        name: listlocations
+        description: List Locations
+        call: upkeep-locations.listlocations
+        with:
+          page: rest.page
+          limit: rest.limit
+          parentId: rest.parentId
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createlocation
+        description: Create Location
+        call: upkeep-locations.createlocation
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/locations/{id}
+      name: locations-id
+      description: REST surface for locations-id.
+      operations:
+      - method: GET
+        name: getlocation
+        description: Get Location
+        call: upkeep-locations.getlocation
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatelocation
+        description: Update Location
+        call: upkeep-locations.updatelocation
+        with:
+          id: rest.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletelocation
+        description: Delete Location
+        call: upkeep-locations.deletelocation
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: upkeep-locations-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for UpKeep API — Locations. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: list-locations
+      description: List Locations
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-locations.listlocations
+      with:
+        page: tools.page
+        limit: tools.limit
+        parentId: tools.parentId
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-location
+      description: Create Location
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: upkeep-locations.createlocation
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-location
+      description: Get Location
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-locations.getlocation
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-location
+      description: Update Location
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: upkeep-locations.updatelocation
+      with:
+        id: tools.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-location
+      description: Delete Location
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: upkeep-locations.deletelocation
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.

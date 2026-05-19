@@ -1,0 +1,241 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: UpKeep API — Purchase Orders
+  description: 'UpKeep API — Purchase Orders. 5 operations. Lead operation: List Purchase Orders. Self-contained Naftiko capability
+    covering one Upkeep business surface.'
+  tags:
+  - Upkeep
+  - Purchase Orders
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    UPKEEP_API_KEY: UPKEEP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: upkeep-purchase-orders
+    baseUri: https://api.onupkeep.com/api/v2
+    description: UpKeep API — Purchase Orders business capability. Self-contained, no shared references.
+    resources:
+    - name: purchase-orders
+      path: /purchase-orders
+      operations:
+      - name: listpurchaseorders
+        method: GET
+        description: List Purchase Orders
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+      - name: createpurchaseorder
+        method: POST
+        description: Create Purchase Order
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: purchase-orders-id
+      path: /purchase-orders/{id}
+      operations:
+      - name: getpurchaseorder
+        method: GET
+        description: Get Purchase Order
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+      - name: updatepurchaseorder
+        method: PATCH
+        description: Update Purchase Order
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+      - name: deletepurchaseorder
+        method: DELETE
+        description: Delete Purchase Order
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: session-token
+      value: '{{env.UPKEEP_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: upkeep-purchase-orders-rest
+    port: 8080
+    description: REST adapter for UpKeep API — Purchase Orders. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/purchase-orders
+      name: purchase-orders
+      description: REST surface for purchase-orders.
+      operations:
+      - method: GET
+        name: listpurchaseorders
+        description: List Purchase Orders
+        call: upkeep-purchase-orders.listpurchaseorders
+        with:
+          page: rest.page
+          limit: rest.limit
+          status: rest.status
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createpurchaseorder
+        description: Create Purchase Order
+        call: upkeep-purchase-orders.createpurchaseorder
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/purchase-orders/{id}
+      name: purchase-orders-id
+      description: REST surface for purchase-orders-id.
+      operations:
+      - method: GET
+        name: getpurchaseorder
+        description: Get Purchase Order
+        call: upkeep-purchase-orders.getpurchaseorder
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: PATCH
+        name: updatepurchaseorder
+        description: Update Purchase Order
+        call: upkeep-purchase-orders.updatepurchaseorder
+        with:
+          id: rest.id
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: DELETE
+        name: deletepurchaseorder
+        description: Delete Purchase Order
+        call: upkeep-purchase-orders.deletepurchaseorder
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: upkeep-purchase-orders-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for UpKeep API — Purchase Orders. One tool per consumed operation, routed inline through this
+      capability's consumes block.
+    tools:
+    - name: list-purchase-orders
+      description: List Purchase Orders
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-purchase-orders.listpurchaseorders
+      with:
+        page: tools.page
+        limit: tools.limit
+        status: tools.status
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-purchase-order
+      description: Create Purchase Order
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: upkeep-purchase-orders.createpurchaseorder
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-purchase-order
+      description: Get Purchase Order
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-purchase-orders.getpurchaseorder
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: update-purchase-order
+      description: Update Purchase Order
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: true
+      call: upkeep-purchase-orders.updatepurchaseorder
+      with:
+        id: tools.id
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: delete-purchase-order
+      description: Delete Purchase Order
+      hints:
+        readOnly: false
+        destructive: true
+        idempotent: true
+      call: upkeep-purchase-orders.deletepurchaseorder
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.

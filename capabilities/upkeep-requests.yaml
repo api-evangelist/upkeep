@@ -1,0 +1,166 @@
+naftiko: 1.0.0-alpha2
+info:
+  label: UpKeep API — Requests
+  description: 'UpKeep API — Requests. 3 operations. Lead operation: List Requests. Self-contained Naftiko capability covering
+    one Upkeep business surface.'
+  tags:
+  - Upkeep
+  - Requests
+  created: '2026-05-19'
+  modified: '2026-05-19'
+binds:
+- namespace: env
+  keys:
+    UPKEEP_API_KEY: UPKEEP_API_KEY
+capability:
+  consumes:
+  - type: http
+    namespace: upkeep-requests
+    baseUri: https://api.onupkeep.com/api/v2
+    description: UpKeep API — Requests business capability. Self-contained, no shared references.
+    resources:
+    - name: requests
+      path: /requests
+      operations:
+      - name: listrequests
+        method: GET
+        description: List Requests
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: page
+          in: query
+          type: integer
+        - name: limit
+          in: query
+          type: integer
+        - name: status
+          in: query
+          type: string
+      - name: createrequest
+        method: POST
+        description: Create Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: body
+          in: body
+          type: object
+          description: Request body (JSON).
+          required: true
+    - name: requests-id
+      path: /requests/{id}
+      operations:
+      - name: getrequest
+        method: GET
+        description: Get Request
+        outputRawFormat: json
+        outputParameters:
+        - name: result
+          type: object
+          value: $.
+        inputParameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+    authentication:
+      type: apikey
+      key: session-token
+      value: '{{env.UPKEEP_API_KEY}}'
+      placement: header
+  exposes:
+  - type: rest
+    namespace: upkeep-requests-rest
+    port: 8080
+    description: REST adapter for UpKeep API — Requests. One Spectral-compliant resource per consumed operation, prefixed
+      with /v1.
+    resources:
+    - path: /v1/requests
+      name: requests
+      description: REST surface for requests.
+      operations:
+      - method: GET
+        name: listrequests
+        description: List Requests
+        call: upkeep-requests.listrequests
+        with:
+          page: rest.page
+          limit: rest.limit
+          status: rest.status
+        outputParameters:
+        - type: object
+          mapping: $.
+      - method: POST
+        name: createrequest
+        description: Create Request
+        call: upkeep-requests.createrequest
+        with:
+          body: rest.body
+        outputParameters:
+        - type: object
+          mapping: $.
+    - path: /v1/requests/{id}
+      name: requests-id
+      description: REST surface for requests-id.
+      operations:
+      - method: GET
+        name: getrequest
+        description: Get Request
+        call: upkeep-requests.getrequest
+        with:
+          id: rest.id
+        outputParameters:
+        - type: object
+          mapping: $.
+  - type: mcp
+    namespace: upkeep-requests-mcp
+    port: 9090
+    transport: http
+    description: MCP adapter for UpKeep API — Requests. One tool per consumed operation, routed inline through this capability's
+      consumes block.
+    tools:
+    - name: list-requests
+      description: List Requests
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-requests.listrequests
+      with:
+        page: tools.page
+        limit: tools.limit
+        status: tools.status
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: create-request
+      description: Create Request
+      hints:
+        readOnly: false
+        destructive: false
+        idempotent: false
+      call: upkeep-requests.createrequest
+      with:
+        body: tools.body
+      outputParameters:
+      - type: object
+        mapping: $.
+    - name: get-request
+      description: Get Request
+      hints:
+        readOnly: true
+        destructive: false
+        idempotent: true
+      call: upkeep-requests.getrequest
+      with:
+        id: tools.id
+      outputParameters:
+      - type: object
+        mapping: $.

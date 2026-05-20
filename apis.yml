@@ -8,67 +8,71 @@ position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-- CMMS
-- Maintenance Management
-- Asset Management
-- Facility Management
-- Work Orders
+  - CMMS
+  - Maintenance Management
+  - Asset Management
+  - Facility Management
+  - Work Orders
 created: '2025-02-12'
 modified: '2026-05-19'
 url: https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/apis.yml
 specificationVersion: '0.19'
 apis:
-- aid: upkeep:upkeep
-  name: UpKeep API
-  description: The UpKeep API provides programmatic access to the UpKeep CMMS platform, enabling management of work orders,
-    assets, locations, preventive maintenance schedules, parts inventory, purchase orders, meters, and maintenance requests.
-    Uses session token authentication with version 2022-09-14.
-  humanURL: https://developers.onupkeep.com/
-  baseURL: https://api.onupkeep.com/api/v2
-  tags:
-  - CMMS
-  - Maintenance Management
-  - Asset Management
-  - Work Orders
-  - Preventive Maintenance
-  properties:
-  - type: Documentation
-    url: https://developers.onupkeep.com/
-  - type: OpenAPI
-    url: https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/openapi/upkeep-openapi.yml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-assets.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-authentication.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-locations.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-meters.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-parts.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-preventive-maintenance.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-purchase-orders.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-requests.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-webhooks.yaml
-  - type: NaftikoCapability
-    url: capabilities/upkeep-work-orders.yaml
+  - aid: upkeep:upkeep
+    name: UpKeep API
+    description: The UpKeep API provides programmatic access to the UpKeep CMMS platform, enabling management of work orders,
+      assets, locations, preventive maintenance schedules, parts inventory, purchase orders, meters, and maintenance requests.
+      Uses session token authentication with version 2022-09-14.
+    humanURL: https://developers.onupkeep.com/
+    baseURL: https://api.onupkeep.com/api/v2
+    tags:
+    - CMMS
+    - Maintenance Management
+    - Asset Management
+    - Work Orders
+    - Preventive Maintenance
+    properties:
+    - type: Documentation
+      url: https://developers.onupkeep.com/
+    - type: OpenAPI
+      url: https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/openapi/upkeep-openapi.yml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-assets.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-authentication.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-locations.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-meters.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-parts.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-preventive-maintenance.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-purchase-orders.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-requests.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-webhooks.yaml
+    - type: NaftikoCapability
+      url: capabilities/upkeep-work-orders.yaml
 common:
-- type: Website
-  url: https://upkeep.com
-- type: Developer Documentation
-  url: https://developers.onupkeep.com/
-- type: REST API Integration
-  url: https://upkeep.com/integrations/rest-api/
-- type: Integrations
-  url: https://upkeep.com/product/integrations
+  - type: GitHubOrganization
+    url: https://github.com/upkeepapp
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/on-upkeep
+  - type: Website
+    url: https://upkeep.com
+  - type: Developer Documentation
+    url: https://developers.onupkeep.com/
+  - type: REST API Integration
+    url: https://upkeep.com/integrations/rest-api/
+  - type: Integrations
+    url: https://upkeep.com/product/integrations
 integrations:
-- name: UpKeep
-- name: Download on the App Store
-- name: Get it on Google Play
+  - name: UpKeep
+  - name: Download on the App Store
+  - name: Get it on Google Play
 maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
+  - FN: Kin Lane
+    email: kin@apievangelist.com

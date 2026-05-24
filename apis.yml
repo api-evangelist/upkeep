@@ -69,6 +69,8 @@ common:
     url: https://upkeep.com/integrations/rest-api/
   - type: Integrations
     url: https://upkeep.com/product/integrations
+  - type: LLMsTxt
+    url: https://upkeep.com/llms.txt
 integrations:
   - name: UpKeep
   - name: Download on the App Store

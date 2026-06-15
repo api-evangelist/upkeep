@@ -1,79 +1,61 @@
-# UpKeep
+# UpKeep (upkeep)
 
-UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform for maintenance teams and facility managers. The UpKeep API provides programmatic access to work orders, assets, locations, preventive maintenance schedules, parts inventory, purchase orders, meters, and maintenance requests.
+UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform for maintenance teams and facility managers. The UpKeep API provides programmatic access to work orders, assets, locations, preventive maintenance schedules, parts inventory, purchase orders, meters, requests, and webhooks.
 
-**Developer Documentation:** https://developers.onupkeep.com/
-**Website:** https://upkeep.com
+**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/apis.yml)
+
+## Scope
+
+- **Type:** Index
+- **Position:** Consumer
+- **Access:** 3rd-Party
+
+## Tags
+
+- CMMS
+- Maintenance Management
+- Asset Management
+- Facility Management
+- Work Orders
+
+## Timestamps
+
+- **Created:** 2025-02-12
+- **Modified:** 2026-05-19
 
 ## APIs
 
-| API | Description |
-|---|---|
-| [UpKeep API](openapi/upkeep-openapi.yml) | CMMS REST API v2022-09-14 — work orders, assets, PM schedules, parts, purchase orders, meters, requests, webhooks |
+### UpKeep API
 
-## OpenAPI Specifications
+The UpKeep API provides programmatic access to the UpKeep CMMS platform, enabling management of work orders, assets, locations, preventive maintenance schedules, parts inventory, purchase orders, meters, and maintenance requests. Uses session token authentication with version 2022-09-14.
 
-| Spec | Description |
-|---|---|
-| [upkeep-openapi.yml](openapi/upkeep-openapi.yml) | UpKeep CMMS API covering work orders, assets, locations, PM schedules, parts, purchase orders, meters, requests, and webhooks |
+- **Human URL:** [https://developers.onupkeep.com/](https://developers.onupkeep.com/)
+- **Base URL:** `https://api.onupkeep.com/api/v2`
 
-## Spectral Rules
+#### Tags
 
-| Ruleset | Description |
-|---|---|
-| [upkeep-rules.yml](rules/upkeep-rules.yml) | Spectral ruleset enforcing UpKeep API conventions including session token auth, response envelopes, and path naming |
+- CMMS
+- Maintenance Management
+- Asset Management
+- Work Orders
+- Preventive Maintenance
 
-## Naftiko Capabilities
+#### Properties
 
-### Shared Definitions
+- [Documentation](https://developers.onupkeep.com/)
+- [OpenAPI](https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/openapi/upkeep-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
+- [Postman Collection](collections/upkeep.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
+- [Open Collection](collections/upkeep.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
 
-| File | APIs Covered |
-|---|---|
-| [shared/upkeep.yaml](capabilities/shared/upkeep.yaml) | UpKeep CMMS API (work orders, assets, PM, parts, meters, requests) |
+## Common Properties
 
-### Workflow Capabilities
-
-| Workflow | Description | Tools |
-|---|---|---|
-| [maintenance-operations.yaml](capabilities/maintenance-operations.yaml) | End-to-end maintenance operations — work orders, assets, PM schedules, parts, meters, and requests | 13 tools |
-
-## JSON Schemas
-
-| Schema | Description |
-|---|---|
-| [upkeep-work-order-schema.json](json-schema/upkeep-work-order-schema.json) | Maintenance work order resource |
-| [upkeep-asset-schema.json](json-schema/upkeep-asset-schema.json) | Physical asset resource |
-
-## JSON Structure
-
-| Structure | Description |
-|---|---|
-| [upkeep-work-order-structure.json](json-structure/upkeep-work-order-structure.json) | Field-level documentation for the Work Order resource |
-
-## JSON-LD
-
-| Context | Description |
-|---|---|
-| [upkeep-context.jsonld](json-ld/upkeep-context.jsonld) | Linked data context mapping UpKeep resources to schema.org |
-
-## Examples
-
-| Example | Description |
-|---|---|
-| [upkeep-create-work-order-example.json](examples/upkeep-create-work-order-example.json) | POST /work-orders request and response |
-| [upkeep-list-assets-example.json](examples/upkeep-list-assets-example.json) | GET /assets with location filter response |
-
-## Vocabulary
-
-| File | Description |
-|---|---|
-| [upkeep-vocabulary.yml](vocabulary/upkeep-vocabulary.yml) | Domain vocabulary for UpKeep CMMS including maintenance, asset, and facility management concepts |
-
-## Links
-
-- **Website:** https://upkeep.com
-- **Developer Documentation:** https://developers.onupkeep.com/
-- **REST API Integration:** https://upkeep.com/integrations/rest-api/
+- [GitHub Organization](https://github.com/upkeepapp)
+- [LinkedIn](https://www.linkedin.com/company/on-upkeep)
+- [Website](https://upkeep.com)
+- [Developer  Documentation](https://developers.onupkeep.com/)
+- [R E S T  A P I  Integration](https://upkeep.com/integrations/rest-api/)
+- [Integrations](https://upkeep.com/product/integrations)
+- [L L Ms Txt](https://upkeep.com/llms.txt)
 
 ## Maintainers
 

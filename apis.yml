@@ -45,13 +45,13 @@ common:
     url: https://www.linkedin.com/company/on-upkeep
   - type: Website
     url: https://upkeep.com
-  - type: Developer Documentation
+  - type: Documentation
     url: https://developers.onupkeep.com/
   - type: REST API Integration
     url: https://upkeep.com/integrations/rest-api/
   - type: Integrations
     url: https://upkeep.com/product/integrations
-  - type: LLMsTxt
+  - type: LlmsText
     url: https://upkeep.com/llms.txt
 integrations:
   - name: UpKeep

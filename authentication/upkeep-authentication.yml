@@ -1,0 +1,16 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/upkeep-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: SessionToken
+  type: apiKey
+  in: header
+  parameter: session-token
+  description: Session token obtained from POST /auth
+  sources:
+  - openapi/upkeep-openapi.yml

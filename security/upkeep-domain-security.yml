@@ -1,0 +1,32 @@
+generated: '2026-07-11'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: upkeep.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 20 04:44:00 2026 GMT
+  hsts: false
+- host: developers.onupkeep.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec 25 23:59:59 2026 GMT
+  hsts: false
+- host: api.onupkeep.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Aug 14 03:00:22 2026 GMT
+  hsts: null
+domains:
+- domain: upkeep.com
+  dnssec: true
+  caa: []
+  spf: false
+  dmarc: true
+  dmarc_policy: none
+- domain: onupkeep.com
+  dnssec: true
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: reject

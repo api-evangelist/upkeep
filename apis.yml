@@ -39,6 +39,14 @@ apis:
       - type: OpenAPI
         url: https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/openapi/upkeep-openapi.yml
 common:
+  - type: TrustCenter
+    url: security/upkeep-trust-center.yml
+  - type: DomainSecurity
+    url: security/upkeep-domain-security.yml
+  - type: Authentication
+    url: authentication/upkeep-authentication.yml
+  - url: https://upkeep.com/blog
+    type: Blog
   - type: GitHubOrganization
     url: https://github.com/upkeepapp
   - type: LinkedIn

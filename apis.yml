@@ -39,6 +39,8 @@ apis:
       - type: OpenAPI
         url: https://raw.githubusercontent.com/api-evangelist/upkeep/refs/heads/main/openapi/upkeep-openapi.yml
 common:
+  - type: AgenticAccess
+    url: agentic-access/upkeep-agentic-access.yml
   - type: TrustCenter
     url: security/upkeep-trust-center.yml
   - type: DomainSecurity

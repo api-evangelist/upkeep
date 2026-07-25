@@ -1,0 +1,252 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Purchase Orders API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Purchase Orders
+  description: Purchase order management
+paths:
+  /purchase-orders:
+    get:
+      operationId: listPurchaseOrders
+      summary: List Purchase Orders
+      description: Retrieve a list of purchase orders.
+      tags:
+      - Purchase Orders
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - draft
+          - pending
+          - approved
+          - received
+          - cancelled
+      responses:
+        '200':
+          description: List of purchase orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createPurchaseOrder
+      summary: Create Purchase Order
+      description: Create a new purchase order.
+      tags:
+      - Purchase Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrderRequest'
+      responses:
+        '200':
+          description: Purchase order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /purchase-orders/{id}:
+    get:
+      operationId: getPurchaseOrder
+      summary: Get Purchase Order
+      description: Retrieve details of a specific purchase order.
+      tags:
+      - Purchase Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Purchase order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updatePurchaseOrder
+      summary: Update Purchase Order
+      description: Update an existing purchase order.
+      tags:
+      - Purchase Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrderRequest'
+      responses:
+        '200':
+          description: Purchase order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PurchaseOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deletePurchaseOrder
+      summary: Delete Purchase Order
+      description: Delete a purchase order.
+      tags:
+      - Purchase Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Purchase order deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    PurchaseOrderRequest:
+      type: object
+      required:
+      - vendorId
+      - lineItems
+      properties:
+        vendorId:
+          type: string
+        lineItems:
+          type: array
+          items:
+            type: object
+            required:
+            - partId
+            - quantity
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+    PurchaseOrderList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PurchaseOrder'
+    PurchaseOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        poNumber:
+          type: string
+        vendorId:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - pending
+          - approved
+          - received
+          - cancelled
+        totalCost:
+          type: number
+        lineItems:
+          type: array
+          items:
+            type: object
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
+        createdAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

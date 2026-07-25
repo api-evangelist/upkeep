@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Webhooks API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Webhooks
+  description: Webhook event subscription management
+paths:
+  /webhooks:
+    get:
+      operationId: listWebhooks
+      summary: List Webhooks
+      description: Retrieve a list of webhook subscriptions.
+      tags:
+      - Webhooks
+      responses:
+        '200':
+          description: List of webhooks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createWebhook
+      summary: Create Webhook
+      description: Create a new webhook subscription for event notifications.
+      tags:
+      - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+      responses:
+        '200':
+          description: Webhook created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /webhooks/{id}:
+    get:
+      operationId: getWebhook
+      summary: Get Webhook
+      description: Retrieve details of a specific webhook subscription.
+      tags:
+      - Webhooks
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Webhook details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateWebhook
+      summary: Update Webhook
+      description: Update an existing webhook subscription.
+      tags:
+      - Webhooks
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+      responses:
+        '200':
+          description: Webhook updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteWebhook
+      summary: Delete Webhook
+      description: Delete a webhook subscription.
+      tags:
+      - Webhooks
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Webhook deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+          description: Event types to subscribe to (e.g., work_order.created, asset.updated)
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    WebhookRequest:
+      type: object
+      required:
+      - url
+      - events
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+          default: true
+    WebhookList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Webhook'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

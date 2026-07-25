@@ -1,0 +1,226 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Parts API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Parts
+  description: Parts and inventory management
+paths:
+  /parts:
+    get:
+      operationId: listParts
+      summary: List Parts
+      description: Retrieve a list of parts and inventory items.
+      tags:
+      - Parts
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+      responses:
+        '200':
+          description: List of parts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createPart
+      summary: Create Part
+      description: Create a new part or inventory item.
+      tags:
+      - Parts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartRequest'
+      responses:
+        '200':
+          description: Part created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /parts/{id}:
+    get:
+      operationId: getPart
+      summary: Get Part
+      description: Retrieve details of a specific part.
+      tags:
+      - Parts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Part details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updatePart
+      summary: Update Part
+      description: Update an existing part.
+      tags:
+      - Parts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartRequest'
+      responses:
+        '200':
+          description: Part updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Part'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deletePart
+      summary: Delete Part
+      description: Delete a part from inventory.
+      tags:
+      - Parts
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Part deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Part:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        partNumber:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        minimumQuantity:
+          type: integer
+        locationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    PartRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        partNumber:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        minimumQuantity:
+          type: integer
+    PartList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

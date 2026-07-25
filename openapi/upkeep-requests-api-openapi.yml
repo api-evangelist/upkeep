@@ -1,0 +1,198 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Requests API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Requests
+  description: Maintenance request management
+paths:
+  /requests:
+    get:
+      operationId: listRequests
+      summary: List Requests
+      description: Retrieve a list of maintenance requests.
+      tags:
+      - Requests
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - open
+          - pending
+          - cancelled
+          - complete
+      responses:
+        '200':
+          description: List of maintenance requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createRequest
+      summary: Create Request
+      description: Create a new maintenance request.
+      tags:
+      - Requests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MaintenanceRequestBody'
+      responses:
+        '200':
+          description: Maintenance request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceRequest'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /requests/{id}:
+    get:
+      operationId: getRequest
+      summary: Get Request
+      description: Retrieve a specific maintenance request.
+      tags:
+      - Requests
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Maintenance request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    MaintenanceRequestBody:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+    RequestList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MaintenanceRequest'
+    MaintenanceRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - pending
+          - cancelled
+          - complete
+        assetId:
+          type: string
+        locationId:
+          type: string
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        createdAt:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

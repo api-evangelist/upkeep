@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Meters API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Meters
+  description: Meter and reading management
+paths:
+  /meters:
+    get:
+      operationId: listMeters
+      summary: List Meters
+      description: Retrieve a list of meters.
+      tags:
+      - Meters
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+      responses:
+        '200':
+          description: List of meters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeterList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createMeter
+      summary: Create Meter
+      description: Create a new meter for tracking asset readings.
+      tags:
+      - Meters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeterRequest'
+      responses:
+        '200':
+          description: Meter created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meter'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /meters/{id}/readings:
+    post:
+      operationId: submitMeterReading
+      summary: Submit Meter Reading
+      description: Submit a new reading for a meter.
+      tags:
+      - Meters
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Meter identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - value
+              - readingDate
+              properties:
+                value:
+                  type: number
+                  description: Meter reading value
+                readingDate:
+                  type: string
+                  format: date-time
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Meter reading recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeterReading'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    MeterList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meter'
+    Meter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
+          description: Unit of measurement (e.g., hours, miles, cycles)
+        currentReading:
+          type: number
+        lastReadingDate:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+    MeterRequest:
+      type: object
+      required:
+      - name
+      - assetId
+      - unit
+      properties:
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+    MeterReading:
+      type: object
+      properties:
+        id:
+          type: string
+        meterId:
+          type: string
+        value:
+          type: number
+        readingDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

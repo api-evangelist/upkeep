@@ -1,0 +1,313 @@
+openapi: 3.0.3
+info:
+  title: UpKeep Assets Work Orders API
+  description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
+  version: '2022-09-14'
+  contact:
+    name: UpKeep Developer Support
+    url: https://developers.onupkeep.com/
+  termsOfService: https://upkeep.com/terms/
+servers:
+- url: https://api.onupkeep.com/api/v2
+  description: UpKeep Production API
+security:
+- SessionToken: []
+tags:
+- name: Work Orders
+  description: Work order creation and management
+paths:
+  /work-orders:
+    get:
+      operationId: listWorkOrders
+      summary: List Work Orders
+      description: Retrieve a paginated list of work orders. Supports filtering by status, priority, asset, location, and date range.
+      tags:
+      - Work Orders
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+        description: Pagination offset (number of records to skip)
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+          maximum: 250
+        description: Number of records to return
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - complete
+        description: Filter by work order status
+      - name: priority
+        in: query
+        schema:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        description: Filter by priority level
+      - name: includes
+        in: query
+        schema:
+          type: string
+        description: Comma-separated list of related resources to include (e.g., assignedTo,location,asset)
+      - name: sort
+        in: query
+        schema:
+          type: string
+        description: Sort field and direction (e.g., createdAt:desc)
+      responses:
+        '200':
+          description: List of work orders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrderList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createWorkOrder
+      summary: Create Work Order
+      description: Create a new work order for maintenance tasks.
+      tags:
+      - Work Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderRequest'
+      responses:
+        '200':
+          description: Work order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /work-orders/{id}:
+    get:
+      operationId: getWorkOrder
+      summary: Get Work Order
+      description: Retrieve details of a specific work order.
+      tags:
+      - Work Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Work order identifier
+      - name: includes
+        in: query
+        schema:
+          type: string
+        description: Related resources to include
+      responses:
+        '200':
+          description: Work order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateWorkOrder
+      summary: Update Work Order
+      description: Update fields on an existing work order.
+      tags:
+      - Work Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkOrderRequest'
+      responses:
+        '200':
+          description: Work order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteWorkOrder
+      summary: Delete Work Order
+      description: Permanently delete a work order.
+      tags:
+      - Work Orders
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Work order deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    WorkOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - complete
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        assetId:
+          type: string
+        locationId:
+          type: string
+        assignedToId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        estimatedHours:
+          type: number
+        actualHours:
+          type: number
+        category:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+    WorkOrderRequest:
+      type: object
+      required:
+      - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - complete
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        assetId:
+          type: string
+        locationId:
+          type: string
+        assignedToId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        estimatedHours:
+          type: number
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+    WorkOrderList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrder'
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: session-token
+      description: Session token obtained from POST /auth

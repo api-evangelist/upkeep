@@ -1,0 +1,32 @@
+{
+  "provider": "upkeep",
+  "sources": [
+    "upkeep-assets-api-openapi.yml",
+    "upkeep-authentication-api-openapi.yml",
+    "upkeep-locations-api-openapi.yml",
+    "upkeep-meters-api-openapi.yml",
+    "upkeep-parts-api-openapi.yml",
+    "upkeep-preventive-maintenance-api-openapi.yml",
+    "upkeep-purchase-orders-api-openapi.yml",
+    "upkeep-requests-api-openapi.yml",
+    "upkeep-webhooks-api-openapi.yml",
+    "upkeep-work-orders-api-openapi.yml"
+  ],
+  "outputs": [
+    "upkeep-assets-api-openapi.yml",
+    "upkeep-authentication-api-openapi.yml",
+    "upkeep-locations-api-openapi.yml",
+    "upkeep-meters-api-openapi.yml",
+    "upkeep-parts-api-openapi.yml",
+    "upkeep-preventive-maintenance-api-openapi.yml",
+    "upkeep-purchase-orders-api-openapi.yml",
+    "upkeep-requests-api-openapi.yml",
+    "upkeep-webhooks-api-openapi.yml",
+    "upkeep-work-orders-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

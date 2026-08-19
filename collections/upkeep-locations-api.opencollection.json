@@ -1,0 +1,128 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "UpKeep Assets Locations API",
+    "version": "2022-09-14"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "session-token",
+      "value": "{{session-token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Locations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Locations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.onupkeep.com/api/v2/locations",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "parentId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by parent location"
+              }
+            ]
+          },
+          "docs": "Retrieve a list of locations in the location hierarchy."
+        },
+        {
+          "info": {
+            "name": "Create Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.onupkeep.com/api/v2/locations",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new location."
+        },
+        {
+          "info": {
+            "name": "Get Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.onupkeep.com/api/v2/locations/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific location."
+        },
+        {
+          "info": {
+            "name": "Update Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.onupkeep.com/api/v2/locations/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an existing location."
+        },
+        {
+          "info": {
+            "name": "Delete Location",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.onupkeep.com/api/v2/locations/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a location."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

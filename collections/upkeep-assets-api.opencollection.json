@@ -1,0 +1,157 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "UpKeep Assets API",
+    "version": "2022-09-14"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "session-token",
+      "value": "{{session-token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Assets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Assets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.onupkeep.com/api/v2/assets",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "includes",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated related resources to include"
+              },
+              {
+                "name": "locationId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by location"
+              }
+            ]
+          },
+          "docs": "Retrieve a paginated list of assets."
+        },
+        {
+          "info": {
+            "name": "Create Asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.onupkeep.com/api/v2/assets",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new asset in the system."
+        },
+        {
+          "info": {
+            "name": "Get Asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.onupkeep.com/api/v2/assets/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieve details of a specific asset."
+        },
+        {
+          "info": {
+            "name": "Update Asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.onupkeep.com/api/v2/assets/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an existing asset."
+        },
+        {
+          "info": {
+            "name": "Delete Asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.onupkeep.com/api/v2/assets/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete an asset from the system."
+        },
+        {
+          "info": {
+            "name": "Record Asset Downtime",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.onupkeep.com/api/v2/assets/:id/downtime",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Asset identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Record a downtime event for an asset."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

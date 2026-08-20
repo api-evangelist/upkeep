@@ -134,6 +134,8 @@ apis:
   humanURL: https://developers.onupkeep.com/
   baseURL: https://api.onupkeep.com/api/v2
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI

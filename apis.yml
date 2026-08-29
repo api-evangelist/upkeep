@@ -5,6 +5,17 @@ description: >-
   maintenance teams and facility managers. The UpKeep API provides programmatic access to work orders, assets,
   locations, preventive maintenance schedules, parts inventory, purchase orders, meters, requests, and webhooks.
 type: Index
+deliveryModel:
+  model: unknown
+  open_source: false
+  commercial: false
+  callable_host: true
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve

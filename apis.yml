@@ -74,6 +74,8 @@ apis:
   humanURL: https://developers.onupkeep.com/
   baseURL: https://api.onupkeep.com/api/v2
   tags:
+  - Location
+  tags_raw:
   - Locations
   properties:
   - type: OpenAPI

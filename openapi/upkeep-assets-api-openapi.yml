@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: UpKeep Assets API
   description: UpKeep is an asset operations management and CMMS (Computerized Maintenance Management System) platform. The UpKeep API provides programmatic access to work orders, assets, parts, locations, preventive maintenance schedules, purchase orders, meters, and webhooks for maintenance teams and facility managers.
@@ -197,26 +197,16 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Session token missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
     DowntimeEvent:
       type: object
       properties:
@@ -248,28 +238,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Asset'
-    AssetRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        serialNumber:
-          type: string
-        model:
-          type: string
-        manufacturer:
-          type: string
-        locationId:
-          type: string
-        purchaseDate:
-          type: string
-          format: date
-        purchaseCost:
-          type: number
     Asset:
       type: object
       properties:
@@ -304,15 +272,47 @@ components:
         updatedAt:
           type: string
           format: date-time
-    Error:
+    AssetRequest:
       type: object
+      required:
+      - name
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        name:
           type: string
-          description: Error message
+        description:
+          type: string
+        serialNumber:
+          type: string
+        model:
+          type: string
+        manufacturer:
+          type: string
+        locationId:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchaseCost:
+          type: number
+  responses:
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     SessionToken:
       type: apiKey

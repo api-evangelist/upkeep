@@ -1,16 +1,7 @@
 {
   "provider": "upkeep",
   "sources": [
-    "upkeep-assets-api-openapi.yml",
-    "upkeep-authentication-api-openapi.yml",
-    "upkeep-locations-api-openapi.yml",
-    "upkeep-meters-api-openapi.yml",
-    "upkeep-parts-api-openapi.yml",
-    "upkeep-preventive-maintenance-api-openapi.yml",
-    "upkeep-purchase-orders-api-openapi.yml",
-    "upkeep-requests-api-openapi.yml",
-    "upkeep-webhooks-api-openapi.yml",
-    "upkeep-work-orders-api-openapi.yml"
+    "_original/upkeep-openapi.yml"
   ],
   "outputs": [
     "upkeep-assets-api-openapi.yml",
@@ -27,6 +18,21 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "upkeep-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "upkeep-assets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-meters-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-parts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-preventive-maintenance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-purchase-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-requests-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "upkeep-work-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

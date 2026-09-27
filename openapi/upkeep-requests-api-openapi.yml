@@ -101,6 +101,36 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
+    MaintenanceRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - pending
+          - cancelled
+          - complete
+        assetId:
+          type: string
+        locationId:
+          type: string
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        createdAt:
+          type: string
+          format: date-time
     MaintenanceRequestBody:
       type: object
       required:
@@ -141,36 +171,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MaintenanceRequest'
-    MaintenanceRequest:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          enum:
-          - open
-          - pending
-          - cancelled
-          - complete
-        assetId:
-          type: string
-        locationId:
-          type: string
-        priority:
-          type: string
-          enum:
-          - none
-          - low
-          - medium
-          - high
-        createdAt:
-          type: string
-          format: date-time
   responses:
     BadRequest:
       description: Invalid request body or parameters
@@ -178,14 +178,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

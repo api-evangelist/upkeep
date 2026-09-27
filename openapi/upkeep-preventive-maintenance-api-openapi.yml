@@ -140,57 +140,6 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
-    PreventiveMaintenanceList:
-      type: object
-      properties:
-        success:
-          type: boolean
-        total:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PreventiveMaintenance'
-    PreventiveMaintenance:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        assetId:
-          type: string
-        locationId:
-          type: string
-        frequency:
-          type: string
-          enum:
-          - daily
-          - weekly
-          - monthly
-          - quarterly
-          - annually
-          - custom
-        startDate:
-          type: string
-          format: date
-        assignedToId:
-          type: string
-        estimatedHours:
-          type: number
-        active:
-          type: boolean
     PreventiveMaintenanceRequest:
       type: object
       required:
@@ -222,6 +171,57 @@ components:
           type: string
         estimatedHours:
           type: number
+    PreventiveMaintenance:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        frequency:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+          - quarterly
+          - annually
+          - custom
+        startDate:
+          type: string
+          format: date
+        assignedToId:
+          type: string
+        estimatedHours:
+          type: number
+        active:
+          type: boolean
+    PreventiveMaintenanceList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreventiveMaintenance'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
   responses:
     BadRequest:
       description: Invalid request body or parameters
@@ -229,14 +229,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

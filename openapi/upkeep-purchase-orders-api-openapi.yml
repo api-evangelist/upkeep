@@ -150,6 +150,28 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
+    PurchaseOrderRequest:
+      type: object
+      required:
+      - vendorId
+      - lineItems
+      properties:
+        vendorId:
+          type: string
+        lineItems:
+          type: array
+          items:
+            type: object
+            required:
+            - partId
+            - quantity
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
     PurchaseOrder:
       type: object
       properties:
@@ -183,37 +205,6 @@ components:
         createdAt:
           type: string
           format: date-time
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
-    PurchaseOrderRequest:
-      type: object
-      required:
-      - vendorId
-      - lineItems
-      properties:
-        vendorId:
-          type: string
-        lineItems:
-          type: array
-          items:
-            type: object
-            required:
-            - partId
-            - quantity
-            properties:
-              partId:
-                type: string
-              quantity:
-                type: integer
-              unitCost:
-                type: number
     PurchaseOrderList:
       type: object
       properties:
@@ -225,6 +216,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PurchaseOrder'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
   responses:
     BadRequest:
       description: Invalid request body or parameters
@@ -232,14 +232,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

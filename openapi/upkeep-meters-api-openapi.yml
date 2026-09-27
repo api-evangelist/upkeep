@@ -110,16 +110,20 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
     Meter:
       type: object
       properties:
@@ -140,19 +144,6 @@ components:
         createdAt:
           type: string
           format: date-time
-    MeterRequest:
-      type: object
-      required:
-      - name
-      - assetId
-      - unit
-      properties:
-        name:
-          type: string
-        assetId:
-          type: string
-        unit:
-          type: string
     MeterReading:
       type: object
       properties:
@@ -178,19 +169,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Meter'
-  responses:
-    BadRequest:
-      description: Invalid request body or parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+    MeterRequest:
+      type: object
+      required:
+      - name
+      - assetId
+      - unit
+      properties:
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
   securitySchemes:
     SessionToken:
       type: apiKey

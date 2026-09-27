@@ -198,15 +198,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    Error:
+    AssetRequest:
       type: object
+      required:
+      - name
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        name:
           type: string
-          description: Error message
+        description:
+          type: string
+        serialNumber:
+          type: string
+        model:
+          type: string
+        manufacturer:
+          type: string
+        locationId:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchaseCost:
+          type: number
     DowntimeEvent:
       type: object
       properties:
@@ -272,28 +285,15 @@ components:
         updatedAt:
           type: string
           format: date-time
-    AssetRequest:
+    Error:
       type: object
-      required:
-      - name
       properties:
-        name:
+        success:
+          type: boolean
+          example: false
+        error:
           type: string
-        description:
-          type: string
-        serialNumber:
-          type: string
-        model:
-          type: string
-        manufacturer:
-          type: string
-        locationId:
-          type: string
-        purchaseDate:
-          type: string
-          format: date
-        purchaseCost:
-          type: number
+          description: Error message
   responses:
     BadRequest:
       description: Invalid request body or parameters
@@ -301,14 +301,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

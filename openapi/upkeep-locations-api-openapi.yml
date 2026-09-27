@@ -145,15 +145,6 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
     LocationList:
       type: object
       properties:
@@ -190,15 +181,24 @@ components:
         createdAt:
           type: string
           format: date-time
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
   responses:
-    NotFound:
-      description: Resource not found
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:

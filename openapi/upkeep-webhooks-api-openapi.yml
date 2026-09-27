@@ -129,15 +129,22 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    Error:
+    WebhookRequest:
       type: object
+      required:
+      - url
+      - events
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        url:
           type: string
-          description: Error message
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+          default: true
     Webhook:
       type: object
       properties:
@@ -165,31 +172,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Webhook'
-    WebhookRequest:
+    Error:
       type: object
-      required:
-      - url
-      - events
       properties:
-        url:
-          type: string
-          format: uri
-        events:
-          type: array
-          items:
-            type: string
-        active:
+        success:
           type: boolean
-          default: true
+          example: false
+        error:
+          type: string
+          description: Error message
   responses:
-    NotFound:
-      description: Resource not found
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:

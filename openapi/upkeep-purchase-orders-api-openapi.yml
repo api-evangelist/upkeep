@@ -149,29 +149,35 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    PurchaseOrderRequest:
+    Error:
       type: object
-      required:
-      - vendorId
-      - lineItems
       properties:
-        vendorId:
+        success:
+          type: boolean
+          example: false
+        error:
           type: string
-        lineItems:
-          type: array
-          items:
-            type: object
-            required:
-            - partId
-            - quantity
-            properties:
-              partId:
-                type: string
-              quantity:
-                type: integer
-              unitCost:
-                type: number
+          description: Error message
     PurchaseOrder:
       type: object
       properties:
@@ -216,34 +222,28 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PurchaseOrder'
-    Error:
+    PurchaseOrderRequest:
       type: object
+      required:
+      - vendorId
+      - lineItems
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        vendorId:
           type: string
-          description: Error message
-  responses:
-    BadRequest:
-      description: Invalid request body or parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        lineItems:
+          type: array
+          items:
+            type: object
+            required:
+            - partId
+            - quantity
+            properties:
+              partId:
+                type: string
+              quantity:
+                type: integer
+              unitCost:
+                type: number
   securitySchemes:
     SessionToken:
       type: apiKey

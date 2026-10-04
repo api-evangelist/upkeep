@@ -169,6 +169,9 @@ apis:
   - type: Documentation
     url: https://developers.onupkeep.com/
 common:
+  - type: CapabilityMap
+    url: capabilities/upkeep-capability-edges.yml
+    name: UpKeep Business Capability Map
   - type: AgenticAccess
     url: agentic-access/upkeep-agentic-access.yml
   - type: TrustCenter

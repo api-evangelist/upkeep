@@ -140,8 +140,8 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   responses:
-    BadRequest:
-      description: Invalid request body or parameters
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
@@ -152,22 +152,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    Error:
+    PreventiveMaintenanceList:
       type: object
       properties:
         success:
           type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreventiveMaintenance'
     PreventiveMaintenance:
       type: object
       properties:
@@ -230,17 +232,15 @@ components:
           type: string
         estimatedHours:
           type: number
-    PreventiveMaintenanceList:
+    Error:
       type: object
       properties:
         success:
           type: boolean
-        total:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PreventiveMaintenance'
+          example: false
+        error:
+          type: string
+          description: Error message
   securitySchemes:
     SessionToken:
       type: apiKey

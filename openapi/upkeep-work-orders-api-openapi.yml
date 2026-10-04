@@ -181,8 +181,8 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   responses:
-    BadRequest:
-      description: Invalid request body or parameters
+    NotFound:
+      description: Resource not found
       content:
         application/json:
           schema:
@@ -193,22 +193,62 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    Error:
+    WorkOrderList:
       type: object
       properties:
         success:
           type: boolean
-          example: false
-        error:
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkOrder'
+    WorkOrderRequest:
+      type: object
+      required:
+      - title
+      properties:
+        title:
           type: string
-          description: Error message
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - open
+          - in-progress
+          - on-hold
+          - complete
+        priority:
+          type: string
+          enum:
+          - none
+          - low
+          - medium
+          - high
+        assetId:
+          type: string
+        locationId:
+          type: string
+        assignedToId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        estimatedHours:
+          type: number
     WorkOrder:
       type: object
       properties:
@@ -256,55 +296,15 @@ components:
         completedAt:
           type: string
           format: date-time
-    WorkOrderRequest:
-      type: object
-      required:
-      - title
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          enum:
-          - open
-          - in-progress
-          - on-hold
-          - complete
-        priority:
-          type: string
-          enum:
-          - none
-          - low
-          - medium
-          - high
-        assetId:
-          type: string
-        locationId:
-          type: string
-        assignedToId:
-          type: string
-        dueDate:
-          type: string
-          format: date
-        estimatedHours:
-          type: number
-    WorkOrderList:
+    Error:
       type: object
       properties:
         success:
           type: boolean
-        total:
-          type: integer
-        offset:
-          type: integer
-        limit:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/WorkOrder'
+          example: false
+        error:
+          type: string
+          description: Error message
   securitySchemes:
     SessionToken:
       type: apiKey

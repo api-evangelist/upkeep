@@ -111,53 +111,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    MeterReading:
-      type: object
-      properties:
-        id:
-          type: string
-        meterId:
-          type: string
-        value:
-          type: number
-        readingDate:
-          type: string
-          format: date-time
-        notes:
-          type: string
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
-    MeterRequest:
-      type: object
-      required:
-      - name
-      - assetId
-      - unit
-      properties:
-        name:
-          type: string
-        assetId:
-          type: string
-        unit:
-          type: string
-    MeterList:
-      type: object
-      properties:
-        success:
-          type: boolean
-        total:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Meter'
     Meter:
       type: object
       properties:
@@ -178,15 +131,62 @@ components:
         createdAt:
           type: string
           format: date-time
+    MeterRequest:
+      type: object
+      required:
+      - name
+      - assetId
+      - unit
+      properties:
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
+    MeterReading:
+      type: object
+      properties:
+        id:
+          type: string
+        meterId:
+          type: string
+        value:
+          type: number
+        readingDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+    MeterList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meter'
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
   responses:
-    BadRequest:
-      description: Invalid request body or parameters
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:

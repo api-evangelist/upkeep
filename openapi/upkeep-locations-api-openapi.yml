@@ -145,20 +145,6 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
-    Location:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        address:
-          type: string
-        parentId:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
     LocationRequest:
       type: object
       required:
@@ -190,6 +176,20 @@ components:
         error:
           type: string
           description: Error message
+    Location:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        parentId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
   responses:
     NotFound:
       description: Resource not found
@@ -197,14 +197,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

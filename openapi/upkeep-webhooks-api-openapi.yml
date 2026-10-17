@@ -128,23 +128,26 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    WebhookRequest:
-      type: object
-      required:
-      - url
-      - events
-      properties:
-        url:
-          type: string
-          format: uri
-        events:
-          type: array
-          items:
-            type: string
-        active:
-          type: boolean
-          default: true
     Webhook:
       type: object
       properties:
@@ -172,6 +175,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Webhook'
+    WebhookRequest:
+      type: object
+      required:
+      - url
+      - events
+      properties:
+        url:
+          type: string
+          format: uri
+        events:
+          type: array
+          items:
+            type: string
+        active:
+          type: boolean
+          default: true
     Error:
       type: object
       properties:
@@ -181,25 +200,6 @@ components:
         error:
           type: string
           description: Error message
-  responses:
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     SessionToken:
       type: apiKey

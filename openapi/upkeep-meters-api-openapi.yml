@@ -111,6 +111,33 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    MeterReading:
+      type: object
+      properties:
+        id:
+          type: string
+        meterId:
+          type: string
+        value:
+          type: number
+        readingDate:
+          type: string
+          format: date-time
+        notes:
+          type: string
+    MeterRequest:
+      type: object
+      required:
+      - name
+      - assetId
+      - unit
+      properties:
+        name:
+          type: string
+        assetId:
+          type: string
+        unit:
+          type: string
     Meter:
       type: object
       properties:
@@ -131,33 +158,15 @@ components:
         createdAt:
           type: string
           format: date-time
-    MeterRequest:
-      type: object
-      required:
-      - name
-      - assetId
-      - unit
-      properties:
-        name:
-          type: string
-        assetId:
-          type: string
-        unit:
-          type: string
-    MeterReading:
+    Error:
       type: object
       properties:
-        id:
+        success:
+          type: boolean
+          example: false
+        error:
           type: string
-        meterId:
-          type: string
-        value:
-          type: number
-        readingDate:
-          type: string
-          format: date-time
-        notes:
-          type: string
+          description: Error message
     MeterList:
       type: object
       properties:
@@ -169,15 +178,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Meter'
-    Error:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          description: Error message
   responses:
     Unauthorized:
       description: Session token missing or invalid

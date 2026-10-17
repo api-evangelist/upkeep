@@ -140,6 +140,23 @@ paths:
           $ref: '#/components/responses/NotFound'
 components:
   schemas:
+    PartRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        partNumber:
+          type: string
+        quantity:
+          type: integer
+        unitCost:
+          type: number
+        minimumQuantity:
+          type: integer
     PartList:
       type: object
       properties:
@@ -173,23 +190,6 @@ components:
         createdAt:
           type: string
           format: date-time
-    PartRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        partNumber:
-          type: string
-        quantity:
-          type: integer
-        unitCost:
-          type: number
-        minimumQuantity:
-          type: integer
     Error:
       type: object
       properties:
@@ -206,14 +206,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

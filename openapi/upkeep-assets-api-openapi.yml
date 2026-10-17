@@ -198,28 +198,26 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    AssetRequest:
+    Error:
       type: object
-      required:
-      - name
       properties:
-        name:
+        success:
+          type: boolean
+          example: false
+        error:
           type: string
-        description:
-          type: string
-        serialNumber:
-          type: string
-        model:
-          type: string
-        manufacturer:
-          type: string
-        locationId:
-          type: string
-        purchaseDate:
-          type: string
-          format: date
-        purchaseCost:
-          type: number
+          description: Error message
+    AssetList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Asset'
     DowntimeEvent:
       type: object
       properties:
@@ -240,17 +238,6 @@ components:
           description: Duration in minutes
         notes:
           type: string
-    AssetList:
-      type: object
-      properties:
-        success:
-          type: boolean
-        total:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Asset'
     Asset:
       type: object
       properties:
@@ -285,15 +272,28 @@ components:
         updatedAt:
           type: string
           format: date-time
-    Error:
+    AssetRequest:
       type: object
+      required:
+      - name
       properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        name:
           type: string
-          description: Error message
+        description:
+          type: string
+        serialNumber:
+          type: string
+        model:
+          type: string
+        manufacturer:
+          type: string
+        locationId:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        purchaseCost:
+          type: number
   responses:
     NotFound:
       description: Resource not found
@@ -301,14 +301,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
+    BadRequest:
+      description: Invalid request body or parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
+    Unauthorized:
+      description: Session token missing or invalid
       content:
         application/json:
           schema:

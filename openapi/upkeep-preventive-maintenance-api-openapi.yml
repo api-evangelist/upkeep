@@ -139,68 +139,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Session token missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request body or parameters
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    PreventiveMaintenanceList:
-      type: object
-      properties:
-        success:
-          type: boolean
-        total:
-          type: integer
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PreventiveMaintenance'
-    PreventiveMaintenance:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        assetId:
-          type: string
-        locationId:
-          type: string
-        frequency:
-          type: string
-          enum:
-          - daily
-          - weekly
-          - monthly
-          - quarterly
-          - annually
-          - custom
-        startDate:
-          type: string
-          format: date
-        assignedToId:
-          type: string
-        estimatedHours:
-          type: number
-        active:
-          type: boolean
     PreventiveMaintenanceRequest:
       type: object
       required:
@@ -232,6 +171,48 @@ components:
           type: string
         estimatedHours:
           type: number
+    PreventiveMaintenance:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        assetId:
+          type: string
+        locationId:
+          type: string
+        frequency:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+          - quarterly
+          - annually
+          - custom
+        startDate:
+          type: string
+          format: date
+        assignedToId:
+          type: string
+        estimatedHours:
+          type: number
+        active:
+          type: boolean
+    PreventiveMaintenanceList:
+      type: object
+      properties:
+        success:
+          type: boolean
+        total:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PreventiveMaintenance'
     Error:
       type: object
       properties:
@@ -241,6 +222,25 @@ components:
         error:
           type: string
           description: Error message
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request body or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Session token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     SessionToken:
       type: apiKey

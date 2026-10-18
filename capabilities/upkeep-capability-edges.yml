@@ -3,6 +3,7 @@ provider: UpKeep
 generated_by: planning/capability-mapping/scripts/classify_capabilities.py
 model: claude-opus-5
 frame:
+- Infrastructure
 - Software & Technology
 min_confidence: 0.7
 capability_model:
@@ -11,14 +12,59 @@ capability_model:
   attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
     CC BY 4.0
   notice: NOTICE
-edge_count: 1
+edge_count: 6
 edges:
 - tag: Purchase Orders
   spec_file: upkeep-purchase-orders-api-openapi.yml
   capability_id: BC-500.30
   capability_id_l1: BC-500
   capability_name: Purchase Order Management
-  confidence: 0.82
-  evidence: '"POST /purchase-orders createPurchaseOrder Create Purchase Order", schema "PurchaseOrder"'
-  reason: CRUD over purchase order objects for procuring maintenance parts/services is plainly Purchase
-    Order Management within Procurement.
+  confidence: 0.85
+  evidence: POST /purchase-orders createPurchaseOrder Create Purchase Order; schema PurchaseOrderRequest
+  reason: Explicit purchase order creation, retrieval and update is purchase order management within procurement.
+- tag: Preventive Maintenance
+  spec_file: upkeep-preventive-maintenance-api-openapi.yml
+  capability_id: BC-5090.10
+  capability_id_l1: BC-5090
+  capability_name: Maintenance Planning & Scheduling
+  confidence: 0.8
+  evidence: 'POST /preventive-maintenances createPreventiveMaintenance; vendor: "preventive maintenance
+    schedules"'
+  reason: Creating and maintaining preventive maintenance schedules is maintenance planning and scheduling.
+- tag: Work Orders
+  spec_file: upkeep-work-orders-api-openapi.yml
+  capability_id: BC-5090
+  capability_id_l1: BC-5090
+  capability_name: Infrastructure Maintenance Management
+  confidence: 0.8
+  evidence: POST /work-orders createWorkOrder Create Work Order; schema WorkOrder
+  reason: Work orders are the execution unit of maintenance work on assets in a CMMS; covers both planned
+    and reactive, so the L1 is the honest level.
+- tag: Assets
+  spec_file: upkeep-assets-api-openapi.yml
+  capability_id: BC-5070.20
+  capability_id_l1: BC-5070
+  capability_name: Asset Register & Information
+  confidence: 0.75
+  evidence: GET /assets listAssets List Assets; POST /assets/{id}/downtime recordAssetDowntime Record
+    Asset Downtime; schema Asset, DowntimeEvent
+  reason: CRUD over an asset register plus downtime capture is the asset register/information base of
+    a CMMS; this is whole-life asset management data, not a technical object.
+- tag: Parts
+  spec_file: upkeep-parts-api-openapi.yml
+  capability_id: BC-530
+  capability_id_l1: BC-530
+  capability_name: Inventory Management
+  confidence: 0.7
+  evidence: 'vendor: "programmatic access to ... parts inventory"; GET /parts listParts List Parts'
+  reason: Parts records in a CMMS are the spare-parts stock catalogue, i.e. inventory management; no evidence
+    distinguishes stock levels vs replenishment, so L1 only.
+- tag: Requests
+  spec_file: upkeep-requests-api-openapi.yml
+  capability_id: BC-5090
+  capability_id_l1: BC-5090
+  capability_name: Infrastructure Maintenance Management
+  confidence: 0.7
+  evidence: 'schemas: MaintenanceRequest, MaintenanceRequestBody; POST /requests createRequest'
+  reason: The schema names it a MaintenanceRequest — intake of maintenance work requests — but the evidence
+    does not say whether these are reactive faults or planned, so L1 only.
